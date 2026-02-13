@@ -10,23 +10,48 @@ class StorageService(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val appContext = context.applicationContext
 
+    var useClaude: Boolean
+        get() = prefs.getBoolean(KEY_USE_CLAUDE, prefs.getString(KEY_API_KEY, null) != null)
+        set(value) { prefs.edit().putBoolean(KEY_USE_CLAUDE, value).apply() }
+
+    var claudeApiKey: String?
+        get() = prefs.getString(KEY_CLAUDE_API_KEY, prefs.getString(KEY_API_KEY, null))
+        set(value) { prefs.edit().putString(KEY_CLAUDE_API_KEY, value?.trim().takeIf { !it.isNullOrEmpty() }).apply() }
+
+    var deepseekApiKey: String?
+        get() = prefs.getString(KEY_DEEPSEEK_API_KEY, null)
+        set(value) { prefs.edit().putString(KEY_DEEPSEEK_API_KEY, value?.trim().takeIf { !it.isNullOrEmpty() }).apply() }
+
+    var deepseekApiBase: String
+        get() = prefs.getString(KEY_DEEPSEEK_API_BASE, DEFAULT_DEEPSEEK_BASE) ?: DEFAULT_DEEPSEEK_BASE
+        set(value) { prefs.edit().putString(KEY_DEEPSEEK_API_BASE, value?.trim() ?: DEFAULT_DEEPSEEK_BASE).apply() }
+
+    var claudeModel: String
+        get() = prefs.getString(KEY_CLAUDE_MODEL, DEFAULT_API_MODEL) ?: DEFAULT_API_MODEL
+        set(value) { prefs.edit().putString(KEY_CLAUDE_MODEL, value?.trim() ?: DEFAULT_API_MODEL).apply() }
+
+    var deepseekModel: String
+        get() = prefs.getString(KEY_DEEPSEEK_MODEL, DEFAULT_DEEPSEEK_MODEL) ?: DEFAULT_DEEPSEEK_MODEL
+        set(value) { prefs.edit().putString(KEY_DEEPSEEK_MODEL, value?.trim() ?: DEFAULT_DEEPSEEK_MODEL).apply() }
+
+    fun effectiveKey(): String? = if (useClaude) claudeApiKey else deepseekApiKey
+    fun effectiveBase(): String = if (useClaude) DEFAULT_API_BASE else deepseekApiBase
+    fun effectiveModel(): String = if (useClaude) claudeModel else deepseekModel
+
+    @Deprecated("Use effectiveKey/claudeApiKey/deepseekApiKey")
     var apiKey: String?
-        get() = prefs.getString(KEY_API_KEY, null)
-        set(value) {
-            prefs.edit().putString(KEY_API_KEY, value).apply()
-        }
+        get() = effectiveKey()
+        set(value) { if (useClaude) claudeApiKey = value else deepseekApiKey = value }
 
+    @Deprecated("Use effectiveBase")
     var apiBase: String
-        get() = prefs.getString(KEY_API_BASE, DEFAULT_API_BASE) ?: DEFAULT_API_BASE
-        set(value) {
-            prefs.edit().putString(KEY_API_BASE, value).apply()
-        }
+        get() = effectiveBase()
+        set(value) { if (!useClaude) deepseekApiBase = value }
 
+    @Deprecated("Use effectiveModel/claudeModel/deepseekModel")
     var apiModel: String
-        get() = prefs.getString(KEY_API_MODEL, DEFAULT_API_MODEL) ?: DEFAULT_API_MODEL
-        set(value) {
-            prefs.edit().putString(KEY_API_MODEL, value?.trim() ?: DEFAULT_API_MODEL).apply()
-        }
+        get() = effectiveModel()
+        set(value) { if (useClaude) claudeModel = value else deepseekModel = value }
 
     var isFirstRun: Boolean
         get() = prefs.getBoolean(KEY_FIRST_RUN, true)
@@ -165,12 +190,20 @@ class StorageService(context: Context) {
     companion object {
         private const val PREFS_NAME = "ch_chat"
         private const val KEY_API_KEY = "api_key"
+        private const val KEY_USE_CLAUDE = "use_claude"
+        private const val KEY_CLAUDE_API_KEY = "claude_api_key"
+        private const val KEY_DEEPSEEK_API_KEY = "deepseek_api_key"
+        private const val KEY_DEEPSEEK_API_BASE = "deepseek_api_base"
+        private const val KEY_CLAUDE_MODEL = "claude_model"
+        private const val KEY_DEEPSEEK_MODEL = "deepseek_model"
         private const val KEY_API_BASE = "api_base"
         private const val KEY_API_MODEL = "api_model"
         private const val KEY_FIRST_RUN = "first_run"
         private const val KEY_MESSAGES = "messages"
         private const val DEFAULT_API_BASE = "https://api.anthropic.com"
         private const val DEFAULT_API_MODEL = "claude-3-5-sonnet-latest"
+        private const val DEFAULT_DEEPSEEK_BASE = "https://api.deepseek.com/v1"
+        private const val DEFAULT_DEEPSEEK_MODEL = "deepseek-chat"
         const val MAX_STORED = 4000
         private const val MAX_CONTENT_LENGTH = 8000
     }

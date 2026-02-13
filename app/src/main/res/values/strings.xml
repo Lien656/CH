@@ -29,4 +29,13 @@
     <string name="system_prompt_title">Системный промпт</string>
     <string name="system_prompt_hint">Если пусто — используется встроенный промпт. Текст здесь полностью заменяет его.</string>
     <string name="model_deepseek_hint">Для DeepSeek укажи в настройках API URL: https://api.deepseek.com и ключ DeepSeek.</string>
+    <string name="provider_toggle_label">Провайдер (одна модель активна)</string>
+    <string name="provider_claude">Claude (Sonnet)</string>
+    <string name="provider_deepseek">DeepSeek</string>
+    <string name="claude_key_label">API ключ Claude (Anthropic)</string>
+    <string name="deepseek_key_label">API ключ DeepSeek</string>
+    <string name="deepseek_url_label">API URL DeepSeek</string>
+    <string name="settings_more">Экспорт, восстановление, промпт</string>
+    <string name="first_run_provider_title">Какую модель использовать?</string>
+    <string name="first_run_provider_message">Выбери провайдера. Потом в настройках (шестерёнка) можно переключаться и ввести второй ключ.</string>
 </resources>

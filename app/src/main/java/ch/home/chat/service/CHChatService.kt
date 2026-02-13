@@ -50,8 +50,8 @@ class CHChatService : Service() {
         requestJob = scope.launch {
             try {
                 val storage = StorageService(this@CHChatService)
-                val key = storage.apiKey ?: return@launch
-                val api = ApiService(key, storage.apiBase, storage.apiModel)
+                val key = storage.effectiveKey() ?: return@launch
+                val api = ApiService(key, storage.effectiveBase(), storage.effectiveModel())
                 val history = storage.getMessages()
                 val chMemory = storage.getChMemory().take(8000)
                 val chatLogTail = storage.getChatLogTail(4000)

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import ch.home.chat.service.StorageService
 
@@ -25,9 +25,23 @@ class ApiKeyFragment : Fragment() {
         btn.setOnClickListener {
             val key = input.text?.toString()?.trim()
             if (key.isNullOrEmpty()) return@setOnClickListener
-            storage?.apiKey = key
-            storage?.setFirstRunDone()
-            onDone?.invoke()
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.first_run_provider_title)
+                .setMessage(R.string.first_run_provider_message)
+                .setPositiveButton(R.string.provider_claude) { _, _ ->
+                    storage?.claudeApiKey = key
+                    storage?.useClaude = true
+                    storage?.setFirstRunDone()
+                    onDone?.invoke()
+                }
+                .setNegativeButton(R.string.provider_deepseek) { _, _ ->
+                    storage?.deepseekApiKey = key
+                    storage?.useClaude = false
+                    storage?.setFirstRunDone()
+                    onDone?.invoke()
+                }
+                .setCancelable(false)
+                .show()
         }
     }
 

@@ -194,11 +194,7 @@ class ChatActivity : AppCompatActivity() {
         updatePendingAttachmentUi()
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.menu_api_key -> {
-                    startActivity(Intent(this, ApiKeyActivity::class.java))
-                    true
-                }
-                R.id.settings -> {
+                R.id.menu_api_key, R.id.settings -> {
                     startActivity(Intent(this, SettingsActivity::class.java))
                     true
                 }
@@ -224,14 +220,14 @@ class ChatActivity : AppCompatActivity() {
         scrollToBottom()
         saveMessages()
 
-        val key = storage.apiKey
+        val key = storage.effectiveKey()
         if (key.isNullOrEmpty()) {
             addAssistantMessage("API ключ не задан. Зайдите в настройки.")
             return
         }
         lifecycleScope.launch {
             val err = withContext(Dispatchers.IO) {
-                ApiService(key, storage.apiBase, storage.apiModel).checkApiConnection()
+                ApiService(key, storage.effectiveBase(), storage.effectiveModel()).checkApiConnection()
             }
             if (err != null) {
                 addAssistantMessage(err)
