@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ClaudeHome</string>
+    <string name="api_key_label">API ключ</string>
+    <string name="api_key_hint">sk-ant-…</string>
+    <string name="save_and_continue">Сохранить и продолжить</string>
+    <string name="input_hint">Сообщение…</string>
+    <string name="settings">Настройки</string>
+    <string name="change_api_key">Изменить API ключ</string>
+    <string name="change_api_url">Изменить API URL</string>
+    <string name="model">Модель</string>
+    <string name="console">Открыть консоль</string>
+    <string name="api_url_hint">https://api.anthropic.com</string>
+    <string name="save">Сохранить</string>
+    <string name="typing">Отвечаю…</string>
+    <string name="copied">Скопировано</string>
+    <string name="saved">Сохранено:</string>
+    <string name="error_save">Не удалось сохранить файл</string>
+    <string name="attachments">Вложения</string>
+    <string name="export_chat">Экспорт чата</string>
+    <string name="export_chat_done">Чат экспортирован</string>
+    <string name="export_chat_error">Не удалось экспортировать</string>
+    <string name="restore_chat_from_file">Восстановить чат из файла</string>
+    <string name="restore_chat_done">История чата восстановлена</string>
+    <string name="restore_chat_error">Не удалось прочитать файл</string>
+    <string name="attach_camera">Камера</string>
+    <string name="attach_files">Файлы</string>
+    <string name="attach_choose">Камера или файл</string>
+    <string name="system_prompt_title">Системный промпт</string>
+    <string name="system_prompt_hint">Если пусто — используется встроенный промпт. Текст здесь полностью заменяет его.</string>
+    <string name="model_deepseek_hint">Для DeepSeek укажи в настройках API URL: https://api.deepseek.com и ключ DeepSeek.</string>
+</resources>

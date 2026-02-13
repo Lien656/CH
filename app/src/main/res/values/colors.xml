@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#FF121111</color>
+    <color name="bubble_ai">#261a1a1a</color>
+    <color name="bubble_user">#26a3437e</color>
+    <color name="name_claude">#FF244548</color>
+    <color name="name_you">#FF1C2344</color>
+    <color name="input_panel">#26D4C8C0</color>
+    <color name="text_primary">#FF737373</color>
+    <color name="send_button">#FF1A2F31</color>
+    <color name="text">#FF737373</color>
+    <color name="hint">#99737373</color>
+    <color name="bubble">#4D2D2D2D</color>
+</resources>

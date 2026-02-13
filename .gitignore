@@ -1,0 +1,45 @@
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+release/
+
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Local configuration
+local.properties
+*.iml
+.idea/
+!.idea/runConfigurations/
+
+# Keystore (не коммитить)
+*.jks
+*.keystore
+
+# Android Studio Navigation
+.navigation/
+
+# Android Studio captures
+captures/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kotlin
+*.log

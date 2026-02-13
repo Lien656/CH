@@ -1,0 +1,15 @@
+Сборка и запуск (репозиторий kael_chat_app2)
+============================================
+
+1. В Android Studio
+   - Открой КОРЕНЬ репозитория (папку kael_chat_app2, где лежат build.gradle.kts и папка app).
+   - File → Open → выбери эту папку.
+   - Sync Project with Gradle Files → Run (зелёный треугольник).
+
+2. Из командной строки (после git clone)
+   - Перейди в корень:  cd kael_chat_app2
+   - Windows:  gradlew.bat assembleDebug
+   - macOS/Linux:  chmod +x gradlew   затем   ./gradlew assembleDebug
+   APK: app/build/outputs/apk/debug/app-debug.apk
+
+Все команды Gradle — только из корня проекта (не из папки app).
