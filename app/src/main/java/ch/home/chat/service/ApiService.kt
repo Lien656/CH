@@ -310,6 +310,7 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
         if (code != 200) {
             val friendlyMessage = when {
                 code == 401 -> "Неверный API ключ"
+                code == 404 -> "Модель не найдена. Проверь ключ и доступ в console.anthropic.com — там список доступных моделей."
                 isOverloaded || code == 529 -> "Anthropic перегружен. Подожди минуту и попробуй снова."
                 else -> "Ошибка $code. Попробуй позже."
             }
@@ -391,10 +392,10 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
     }
 
     companion object {
-        // PRIMARY: актуальная модель (alias Anthropic)
+        // PRIMARY: актуальная модель
         private const val MODEL_PRIMARY = "claude-3-5-sonnet-latest"
-        // FALLBACK: если primary вернёт 404
-        private const val MODEL_FALLBACK = "claude-3-5-sonnet-20241022"
+        // FALLBACK: если primary вернёт 404 (октябрьская версия может быть недоступна в части регионов)
+        private const val MODEL_FALLBACK = "claude-3-5-sonnet-20240620"
         private const val MODEL_DEEPSEEK = "deepseek-chat"
         private const val ANTHROPIC_VERSION = "2023-06-01"
         /** Лимит токенов на ответ — не обрезать, писать сколько нужно. */
