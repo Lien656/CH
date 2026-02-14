@@ -121,7 +121,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/bg_bubble"
-                    android:hint="https://api.deepseek.com/v1"
+                    android:hint="https://api.deepseek.com"
                     android:inputType="textUri"
                     android:padding="12dp"
                     android:textColor="@color/text"

@@ -21,7 +21,10 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
         .writeTimeout(60, TimeUnit.SECONDS)
         .build()
 
-    private fun baseUrl(): String = apiBase.trim().removeSuffix("/")
+    /** База без завершающего слэша и без /v1 (путь /v1/... добавим отдельно). */
+    private fun baseUrl(): String = apiBase.trim().removeSuffix("/").let { u ->
+        if (u.endsWith("/v1")) u.removeSuffix("/v1") else u
+    }
 
     private fun messagesUrl(): String = "${baseUrl()}/v1/messages"
 

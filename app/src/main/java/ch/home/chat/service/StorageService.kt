@@ -202,7 +202,7 @@ class StorageService(context: Context) {
         private const val KEY_MESSAGES = "messages"
         private const val DEFAULT_API_BASE = "https://api.anthropic.com"
         private const val DEFAULT_API_MODEL = "claude-3-5-sonnet-latest"
-        private const val DEFAULT_DEEPSEEK_BASE = "https://api.deepseek.com/v1"
+        private const val DEFAULT_DEEPSEEK_BASE = "https://api.deepseek.com"
         private const val DEFAULT_DEEPSEEK_MODEL = "deepseek-chat"
         const val MAX_STORED = 4000
         private const val MAX_CONTENT_LENGTH = 8000
