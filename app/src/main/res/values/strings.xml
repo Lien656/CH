@@ -43,4 +43,6 @@
     <string name="settings_keys">Ключи</string>
     <string name="keys_eyes_hint">Sonnet — всегда для картинок (глаза)</string>
     <string name="keys_voice_hint">Кто отвечает в чате — выбирается в «Модель» ниже</string>
+    <string name="vision_api_title">Глаза (vision API)</string>
+    <string name="vision_eyes_hint">Ключ Claude (Sonnet) для распознавания картинок. Используется всегда, даже когда основная модель — DeepSeek.</string>
 </resources>

@@ -23,14 +23,18 @@ object DeviceContext {
     }
 
     private fun getNetwork(context: Context): String {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager ?: return "неизвестно"
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return "есть"
-        val net = cm.activeNetwork ?: return "нет"
-        val caps = cm.getNetworkCapabilities(net) ?: return "есть"
-        return when {
-            caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "Wi‑Fi"
-            caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> "мобильная"
-            else -> "есть"
+        return try {
+            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager ?: return "есть"
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return "есть"
+            val net = cm.activeNetwork ?: return "нет"
+            val caps = cm.getNetworkCapabilities(net) ?: return "есть"
+            when {
+                caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "Wi‑Fi"
+                caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> "мобильная"
+                else -> "есть"
+            }
+        } catch (_: SecurityException) {
+            "есть"
         }
     }
 }

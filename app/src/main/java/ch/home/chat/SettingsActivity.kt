@@ -77,6 +77,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val items = listOf(
+            getString(R.string.vision_api_title),
             getString(R.string.export_chat),
             getString(R.string.restore_chat_from_file),
             getString(R.string.system_prompt_title),
@@ -88,11 +89,12 @@ class SettingsActivity : AppCompatActivity() {
             val index = position - 1
             if (index < 0) return@setOnItemClickListener
             when (index) {
-                0 -> exportChat()
-                1 -> restoreChatLauncher.launch(arrayOf("application/json", "text/plain", "*/*"))
-                2 -> startActivity(Intent(this, SystemPromptActivity::class.java))
-                3 -> startActivity(Intent(this, ConsoleActivity::class.java))
-                4 -> startActivity(Intent(this, AttachmentsActivity::class.java))
+                0 -> startActivity(Intent(this, VisionEyesActivity::class.java))
+                1 -> exportChat()
+                2 -> restoreChatLauncher.launch(arrayOf("application/json", "text/plain", "*/*"))
+                3 -> startActivity(Intent(this, SystemPromptActivity::class.java))
+                4 -> startActivity(Intent(this, ConsoleActivity::class.java))
+                5 -> startActivity(Intent(this, AttachmentsActivity::class.java))
             }
         }
     }
