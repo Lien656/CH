@@ -10,6 +10,7 @@
     <string name="vibration_on_reply">Вибрация при ответе</string>
     <string name="change_api_url">Изменить API URL</string>
     <string name="model">Модель</string>
+    <string name="model_hint">ID модели из console.anthropic.com. Например: claude-3-5-sonnet-latest или claude-3-7-sonnet-latest</string>
     <string name="console">Открыть консоль</string>
     <string name="api_url_hint">https://api.anthropic.com</string>
     <string name="save">Сохранить</string>

@@ -55,6 +55,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val items = listOf(
             getString(R.string.change_api_key),
+            getString(R.string.model),
             getString(R.string.export_chat),
             getString(R.string.restore_chat_from_file),
             getString(R.string.search_in_chat),
@@ -69,11 +70,12 @@ class SettingsActivity : AppCompatActivity() {
                 0 -> startActivity(Intent(this, ApiKeyActivity::class.java).apply {
                     putExtra(ApiKeyActivity.EXTRA_FROM_SETTINGS, true)
                 })
-                1 -> exportChat()
-                2 -> restoreChatLauncher.launch(arrayOf("application/json", "text/plain", "*/*"))
-                3 -> startActivity(Intent(this, SearchChatActivity::class.java))
-                4 -> startActivity(Intent(this, VisionEyesActivity::class.java))
-                5 -> startActivity(Intent(this, AttachmentsActivity::class.java))
+                1 -> startActivity(Intent(this, ModelActivity::class.java))
+                2 -> exportChat()
+                3 -> restoreChatLauncher.launch(arrayOf("application/json", "text/plain", "*/*"))
+                4 -> startActivity(Intent(this, SearchChatActivity::class.java))
+                5 -> startActivity(Intent(this, VisionEyesActivity::class.java))
+                6 -> startActivity(Intent(this, AttachmentsActivity::class.java))
             }
         }
     }

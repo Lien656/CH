@@ -288,8 +288,9 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
 
         var (code, respBodyStr) = executeOnce(modelToUse)
         if (code == 404 && (respBodyStr.contains("model") || respBodyStr.contains("not_found"))) {
-            // Перебираем все модели из API, пока одна не сработает
-            for (modelId in getAvailableModels()) {
+            // Сначала пробуем известные алиасы, потом список из GET /v1/models
+            val toTry = listOf("claude-3-5-sonnet-latest", "claude-3-7-sonnet-latest") + getAvailableModels()
+            for (modelId in toTry) {
                 if (modelId == modelToUse) continue
                 val result = executeOnce(modelId)
                 if (result.first == 200) {
