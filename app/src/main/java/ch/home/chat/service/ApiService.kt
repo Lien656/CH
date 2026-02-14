@@ -282,9 +282,13 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
 
         var (code, respBodyStr) = executeOnce(modelToUse)
         if (code == 404 && (respBodyStr.contains("model") || respBodyStr.contains("not_found"))) {
-            val fallbackResult = executeOnce(MODEL_FALLBACK)
-            code = fallbackResult.first
-            respBodyStr = fallbackResult.second
+            // Запрашиваем список моделей по API и пробуем первую доступную (sonnet)
+            val fromApi = getAvailableModel()
+            if (!fromApi.isNullOrBlank() && fromApi != modelToUse) {
+                val fallbackResult = executeOnce(fromApi)
+                code = fallbackResult.first
+                respBodyStr = fallbackResult.second
+            }
         }
         // 529 / overloaded_error — повтор с задержкой, потом понятное сообщение
         val isOverloaded = code == 529 || respBodyStr.contains("overloaded_error", ignoreCase = true)

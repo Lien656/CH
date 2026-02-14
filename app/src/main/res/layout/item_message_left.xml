@@ -40,38 +40,35 @@
         android:layout_marginTop="4dp"
         android:maxWidth="300dp">
 
-        <androidx.cardview.widget.CardView
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_bubble_claude"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardCornerRadius="@dimen/bubble_radius"
-            app:cardElevation="0dp">
+            android:background="@drawable/bg_bubble_claude">
 
             <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/messageText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:alpha="1"
-                android:padding="12dp"
-                android:textColor="@color/text"
-                android:textSize="@dimen/text_size_body"
-                android:textIsSelectable="true" />
+                android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/messageFileContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="8dp" />
+                <TextView
+                    android:id="@+id/messageText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="1"
+                    android:padding="12dp"
+                    android:textColor="@color/text"
+                    android:textSize="@dimen/text_size_body"
+                    android:textIsSelectable="true" />
+
+                <LinearLayout
+                    android:id="@+id/messageFileContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="8dp" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </FrameLayout>
     </FrameLayout>
 </LinearLayout>
