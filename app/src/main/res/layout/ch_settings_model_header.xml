@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/model"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:paddingBottom="12dp" />
+
+    <!-- Sonnet: ключ + тумблер -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/provider_claude"
+            android:textColor="@color/text"
+            android:textSize="14sp" />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchSonnet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <EditText
+        android:id="@+id/claudeKeyInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_bubble"
+        android:hint="@string/api_key_hint"
+        android:inputType="textPassword"
+        android:padding="12dp"
+        android:textColor="@color/text"
+        android:textColorHint="@color/hint" />
+
+    <!-- DeepSeek: ключ + URL + тумблер -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/provider_deepseek"
+            android:textColor="@color/text"
+            android:textSize="14sp" />
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchDeepSeek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <EditText
+        android:id="@+id/deepseekKeyInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/bg_bubble"
+        android:hint="sk-…"
+        android:inputType="textPassword"
+        android:padding="12dp"
+        android:textColor="@color/text"
+        android:textColorHint="@color/hint" />
+    <EditText
+        android:id="@+id/deepseekUrlInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_bubble"
+        android:hint="https://api.deepseek.com"
+        android:inputType="textUri"
+        android:padding="12dp"
+        android:textColor="@color/text"
+        android:textColorHint="@color/hint" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/keys_eyes_hint"
+        android:textColor="@color/hint"
+        android:textSize="11sp"
+        android:paddingBottom="8dp" />
+</LinearLayout>

@@ -23,7 +23,12 @@ class StorageService(context: Context) {
         set(value) { prefs.edit().putString(KEY_DEEPSEEK_API_KEY, value?.trim().takeIf { !it.isNullOrEmpty() }).apply() }
 
     var deepseekApiBase: String
-        get() = prefs.getString(KEY_DEEPSEEK_API_BASE, DEFAULT_DEEPSEEK_BASE) ?: DEFAULT_DEEPSEEK_BASE
+        get() {
+            val raw = prefs.getString(KEY_DEEPSEEK_API_BASE, DEFAULT_DEEPSEEK_BASE) ?: DEFAULT_DEEPSEEK_BASE
+            val trimmed = raw.trim().removeSuffix("/")
+            val base = if (trimmed.endsWith("/v1")) trimmed.removeSuffix("/v1") else trimmed
+            return base.ifEmpty { DEFAULT_DEEPSEEK_BASE }
+        }
         set(value) { prefs.edit().putString(KEY_DEEPSEEK_API_BASE, value?.trim() ?: DEFAULT_DEEPSEEK_BASE).apply() }
 
     var claudeModel: String

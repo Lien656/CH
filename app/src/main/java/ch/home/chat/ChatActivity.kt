@@ -126,6 +126,8 @@ class ChatActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         toolbar.menu.clear()
         toolbar.inflateMenu(R.menu.chat_menu)
+        // Тап по заголовку открывает настройки (как у Kael)
+        toolbar.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
 
         adapter = ChatAdapter(
             messages = messages,
@@ -194,7 +196,7 @@ class ChatActivity : AppCompatActivity() {
         updatePendingAttachmentUi()
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.menu_api_key, R.id.settings -> {
+                R.id.settings, R.id.settings_overflow -> {
                     startActivity(Intent(this, SettingsActivity::class.java))
                     true
                 }
