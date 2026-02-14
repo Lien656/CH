@@ -69,6 +69,8 @@ class ChatActivity : AppCompatActivity() {
     private var backgroundParallax: View? = null
     private val parallaxMaxPx = 40f
     private val parallaxFactor = 4f
+    /** Запустить сервис после выдачи разрешения на уведомления (requestCode 0). */
+    private var pendingStartChatService = false
 
     private val replyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -248,10 +250,14 @@ class ChatActivity : AppCompatActivity() {
             }
             loading = true
             scrollToBottom()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(this@ChatActivity, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            val needNotifPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ContextCompat.checkSelfPermission(this@ChatActivity, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+            if (needNotifPermission) {
+                pendingStartChatService = true
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0)
+            } else {
+                startService(Intent(this@ChatActivity, ch.home.chat.service.CHChatService::class.java))
             }
-            startService(Intent(this@ChatActivity, ch.home.chat.service.CHChatService::class.java))
         }
     }
 
@@ -259,6 +265,10 @@ class ChatActivity : AppCompatActivity() {
         super.onResume()
         isChatOnScreen = true
         startParallax()
+        // Запросить уведомления при входе в чат (Android 13+), чтобы при отправке разрешение уже было
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2)
+        }
         onReplyReady = {
             runOnUiThread {
                 if (isFinishing) return@runOnUiThread
@@ -420,7 +430,22 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) takePicture()
+        when (requestCode) {
+            0 -> {
+                if (pendingStartChatService) {
+                    pendingStartChatService = false
+                    if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        startService(Intent(this, ch.home.chat.service.CHChatService::class.java))
+                    } else {
+                        loading = false
+                        adapter.showTyping = false
+                        addAssistantMessage("Нужно разрешить уведомления для работы в фоне. Настройки → Приложения → ClaudeHome → Уведомления.")
+                    }
+                }
+            }
+            1 -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) takePicture()
+            2 -> { /* запрос при входе в чат — ничего не делаем, просто показали диалог */ }
+        }
     }
 
     private fun pickFile() {
