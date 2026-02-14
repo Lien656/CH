@@ -7,6 +7,7 @@
     <string name="input_hint">Сообщение…</string>
     <string name="settings">Настройки</string>
     <string name="change_api_key">Изменить API ключ</string>
+    <string name="vibration_on_reply">Вибрация при ответе</string>
     <string name="change_api_url">Изменить API URL</string>
     <string name="model">Модель</string>
     <string name="console">Открыть консоль</string>
@@ -33,6 +34,7 @@
     <string name="provider_claude">Claude (Sonnet)</string>
     <string name="provider_deepseek">DeepSeek</string>
     <string name="claude_key_label">API ключ Claude (Anthropic)</string>
+    <string name="first_run_claude_hint">Ключ для модели Claude (Sonnet). Можно изменить в настройках.</string>
     <string name="deepseek_key_label">API ключ DeepSeek</string>
     <string name="deepseek_url_label">API URL DeepSeek</string>
     <string name="settings_more">Экспорт, восстановление, промпт</string>
@@ -43,6 +45,8 @@
     <string name="settings_keys">Ключи</string>
     <string name="keys_eyes_hint">Sonnet — всегда для картинок (глаза)</string>
     <string name="keys_voice_hint">Кто отвечает в чате — выбирается в «Модель» ниже</string>
+    <string name="search_in_chat">Поиск по чату</string>
+    <string name="search_in_chat_hint">Слово или фраза…</string>
     <string name="vision_api_title">Глаза (vision API)</string>
     <string name="vision_eyes_hint">Ключ Claude (Sonnet) для распознавания картинок. Используется всегда, даже когда основная модель — DeepSeek.</string>
 </resources>

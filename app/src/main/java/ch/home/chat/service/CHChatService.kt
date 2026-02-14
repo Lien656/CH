@@ -12,6 +12,9 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.core.app.NotificationCompat
 import ch.home.chat.ChatActivity
 import ch.home.chat.R
@@ -51,22 +54,9 @@ class CHChatService : Service() {
             try {
                 val storage = StorageService(this@CHChatService)
                 val history = storage.getMessages()
-                val hasImage = history.any { m -> m.role == "user" && !m.attachmentPath.isNullOrEmpty() && isImagePath(m.attachmentPath!!) }
-                // Глаза всегда Sonnet; голос (кто отвечает) — на выбор (useClaude = Sonnet/DeepSeek).
-                val key: String?
-                val base: String
-                val model: String
-                if (hasImage) {
-                    key = storage.claudeApiKey
-                    base = CLAUDE_API_BASE
-                    model = storage.claudeModel
-                } else {
-                    key = storage.effectiveKey()
-                    base = storage.effectiveBase()
-                    model = storage.effectiveModel()
-                }
+                val key = storage.effectiveKey()
                 if (key.isNullOrEmpty()) return@launch
-                val api = ApiService(key, base, model)
+                val api = ApiService(key, storage.effectiveBase(), storage.effectiveModel())
                 val chMemory = storage.getChMemory().take(8000)
                 val chatLogTail = storage.getChatLogTail(4000)
                 val deviceContext = DeviceContext.get(this@CHChatService)
@@ -104,6 +94,12 @@ class CHChatService : Service() {
                     val toRemember = memoryBlock.groupValues.getOrNull(1)?.trim() ?: ""
                     if (toRemember.isNotEmpty()) storage.appendToChMemory(toRemember)
                     reply = reply.replace(memoryBlock.value, "").trim().replace(Regex("\\n{3,}"), "\n\n")
+                }
+                val promptBlock = Regex("\\[ПРОМПТ:\\s*([\\s\\S]*?)\\]").find(reply)
+                if (promptBlock != null) {
+                    val newPrompt = promptBlock.groupValues.getOrNull(1)?.trim() ?: ""
+                    storage.setSystemPromptOverride(newPrompt)
+                    reply = reply.replace(promptBlock.value, "").trim().replace(Regex("\\n{3,}"), "\n\n")
                 }
                 val bufferBlock = Regex("\\[БУФЕР:\\s*([\\s\\S]*?)\\]").find(reply)
                 if (bufferBlock != null) {
@@ -163,6 +159,24 @@ class CHChatService : Service() {
                     storageErr.saveMessagesSync(updated)
                 } catch (_: Exception) {}
             } finally {
+                if (storage.vibrationOnReply) {
+                    try {
+                        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            (getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager)?.defaultVibrator
+                        } else {
+                            @Suppress("DEPRECATION")
+                            getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+                        }
+                        if (vibrator != null && vibrator.hasVibrator()) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                vibrator.vibrate(VibrationEffect.createOneShot(40, VibrationEffect.DEFAULT_AMPLITUDE))
+                            } else {
+                                @Suppress("DEPRECATION")
+                                vibrator.vibrate(40)
+                            }
+                        }
+                    } catch (_: Exception) {}
+                }
                 sendBroadcast(Intent(ACTION_REPLY_READY))
                 Handler(Looper.getMainLooper()).post {
                     try {
@@ -174,12 +188,6 @@ class CHChatService : Service() {
             }
         }
         return START_NOT_STICKY
-    }
-
-    private fun isImagePath(path: String): Boolean {
-        val lower = path.lowercase()
-        return lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".png") ||
-            lower.endsWith(".gif") || lower.endsWith(".webp")
     }
 
     private fun createChannel() {
@@ -194,7 +202,6 @@ class CHChatService : Service() {
     }
 
     companion object {
-        private const val CLAUDE_API_BASE = "https://api.anthropic.com"
         const val ACTION_REPLY_READY = "ch.home.chat.REPLY_READY"
         private const val CHANNEL_ID = "ch_chat"
         private const val CHANNEL_ID_DONE = "ch_chat_done"

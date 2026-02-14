@@ -229,7 +229,8 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
         if (chatLogTail.isNotBlank()) {
             systemContent += "\n\n[Хвост лога чата — можешь опереться на контекст:\n$chatLogTail]"
         }
-        systemContent += "\n\n[Чтобы сохранить что-то в память, напиши в ответе блок [ЗАПОМНИ: твой текст]. Он не покажется в чате — только сохранится.]"
+        systemContent += "\n\n[Память: чтобы сохранить что-то в память, напиши в ответе блок [ЗАПОМНИ: твой текст]. Он не покажется в чате — только сохранится. Ты сам решаешь что помнить.]"
+        systemContent += "\n\n[Системный промпт: ты можешь сам изменить свой системный промпт (инструкции, тон, личность). Напиши в ответе блок [ПРОМПТ: новый системный промпт целиком]. Он заменит текущий. Пустой блок [ПРОМПТ:] — сброс к умолчанию.]"
         systemContent += "\n\n[Файлы: чтобы отдать пользователю текстовый файл, напиши в ответе блок: [ФАЙЛ: имя.расширение] с новой строки содержимое [/ФАЙЛ]. Только текст (txt, json, py, md и т.п.), до ~6000 символов. Файл сохранится в папку claudeFiles.]"
         systemContent += "\n\n[Интернет: поиск по запросу — [ПОИСК: запрос]. Открыть страницу и получить текст — [ОТКРОЙ: полный_https_URL]. Приложение подставит результаты в следующий оборот. Можешь просить сам.]"
         systemContent += "\n\n[Буфер обмена: чтобы скопировать текст пользователю в буфер, напиши [БУФЕР: текст]. Он не покажется в чате — только попадёт в буфер.]"
@@ -390,14 +391,14 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
     }
 
     companion object {
-        // PRIMARY: всегда свежий Claude 3.5 Sonnet
-        private const val MODEL_PRIMARY = "claude-3-5-sonnet-latest"
+        // PRIMARY: Claude 3.5 Sonnet (конкретная версия)
+        private const val MODEL_PRIMARY = "claude-3-5-sonnet-20240620"
         // FALLBACK: стабильный Claude 3 Sonnet, который доступен сейчас
         private const val MODEL_FALLBACK = "claude-3-sonnet-20240229"
         private const val MODEL_DEEPSEEK = "deepseek-chat"
         private const val ANTHROPIC_VERSION = "2023-06-01"
         /** Лимит токенов на ответ — не обрезать, писать сколько нужно. */
-        private const val MAX_TOKENS = 8192
+        private const val MAX_TOKENS = 800
         private const val MAX_MESSAGES_PER_REQUEST = 24
         private const val MAX_CONTENT_CHARS_PER_MESSAGE = 20_000
     }

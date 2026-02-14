@@ -77,6 +77,12 @@
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.CH" />
 
+        <activity
+            android:name="ch.home.chat.SearchChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.CH" />
+
         <service
             android:name="ch.home.chat.service.CHChatService"
             android:exported="false"

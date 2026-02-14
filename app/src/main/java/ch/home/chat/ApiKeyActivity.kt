@@ -18,6 +18,7 @@ class ApiKeyActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { finish() }
         val input = findViewById<EditText>(R.id.apiKeyInput)
+        input.setText(storage.apiKey ?: "")
         findViewById<Button>(R.id.btnSave).setOnClickListener {
             val key = input.text?.toString()?.trim()
             if (!key.isNullOrEmpty()) {

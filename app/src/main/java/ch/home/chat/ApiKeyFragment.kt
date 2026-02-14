@@ -24,8 +24,7 @@ class ApiKeyFragment : Fragment() {
         btn.setOnClickListener {
             val key = input.text?.toString()?.trim()
             if (key.isNullOrEmpty()) return@setOnClickListener
-            storage?.deepseekApiKey = key
-            storage?.useClaude = false
+            storage?.claudeApiKey = key
             storage?.setFirstRunDone()
             onDone?.invoke()
         }

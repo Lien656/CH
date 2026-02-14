@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,7 +16,6 @@ import ch.home.chat.service.StorageService
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var storage: StorageService
-    private var headerView: View? = null
 
     private val restoreChatLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri == null) return@registerForActivityResult
@@ -48,40 +46,19 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val list = findViewById<ListView>(R.id.list)
-        headerView = LayoutInflater.from(this).inflate(R.layout.ch_settings_model_header, list, false)
+        val headerView = LayoutInflater.from(this).inflate(R.layout.item_settings_switch, list, false)
+        headerView.findViewById<android.widget.TextView>(R.id.title).text = getString(R.string.vibration_on_reply)
+        val switchVibration = headerView.findViewById<SwitchCompat>(R.id.switchVibration)
+        switchVibration.isChecked = storage.vibrationOnReply
+        switchVibration.setOnCheckedChangeListener { _, isChecked -> storage.vibrationOnReply = isChecked }
         list.addHeaderView(headerView, null, false)
 
-        val switchSonnet = headerView!!.findViewById<SwitchCompat>(R.id.switchSonnet)
-        val switchDeepSeek = headerView!!.findViewById<SwitchCompat>(R.id.switchDeepSeek)
-        val claudeKeyInput = headerView!!.findViewById<EditText>(R.id.claudeKeyInput)
-        val deepseekKeyInput = headerView!!.findViewById<EditText>(R.id.deepseekKeyInput)
-        val deepseekUrlInput = headerView!!.findViewById<EditText>(R.id.deepseekUrlInput)
-
-        claudeKeyInput.setText(storage.claudeApiKey ?: "")
-        deepseekKeyInput.setText(storage.deepseekApiKey ?: "")
-        deepseekUrlInput.setText(storage.deepseekApiBase)
-        switchSonnet.isChecked = storage.useClaude
-        switchDeepSeek.isChecked = !storage.useClaude
-
-        switchSonnet.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                storage.useClaude = true
-                switchDeepSeek.isChecked = false
-            }
-        }
-        switchDeepSeek.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                storage.useClaude = false
-                switchSonnet.isChecked = false
-            }
-        }
-
         val items = listOf(
-            getString(R.string.vision_api_title),
+            getString(R.string.change_api_key),
             getString(R.string.export_chat),
             getString(R.string.restore_chat_from_file),
-            getString(R.string.system_prompt_title),
-            getString(R.string.console),
+            getString(R.string.search_in_chat),
+            getString(R.string.vision_api_title),
             getString(R.string.attachments)
         )
         list.adapter = ArrayAdapter(this, R.layout.item_settings, items)
@@ -89,24 +66,15 @@ class SettingsActivity : AppCompatActivity() {
             val index = position - 1
             if (index < 0) return@setOnItemClickListener
             when (index) {
-                0 -> startActivity(Intent(this, VisionEyesActivity::class.java))
+                0 -> startActivity(Intent(this, ApiKeyActivity::class.java).apply {
+                    putExtra(ApiKeyActivity.EXTRA_FROM_SETTINGS, true)
+                })
                 1 -> exportChat()
                 2 -> restoreChatLauncher.launch(arrayOf("application/json", "text/plain", "*/*"))
-                3 -> startActivity(Intent(this, SystemPromptActivity::class.java))
-                4 -> startActivity(Intent(this, ConsoleActivity::class.java))
+                3 -> startActivity(Intent(this, SearchChatActivity::class.java))
+                4 -> startActivity(Intent(this, VisionEyesActivity::class.java))
                 5 -> startActivity(Intent(this, AttachmentsActivity::class.java))
             }
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        headerView?.let { h ->
-            storage.claudeApiKey = h.findViewById<EditText>(R.id.claudeKeyInput).text?.toString()?.trim()
-            storage.deepseekApiKey = h.findViewById<EditText>(R.id.deepseekKeyInput).text?.toString()?.trim()
-            val url = h.findViewById<EditText>(R.id.deepseekUrlInput).text?.toString()?.trim()
-            if (!url.isNullOrEmpty()) storage.deepseekApiBase = url
-            storage.useClaude = h.findViewById<SwitchCompat>(R.id.switchSonnet).isChecked
         }
     }
 

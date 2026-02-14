@@ -11,6 +11,10 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import android.Manifest
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -60,6 +64,11 @@ class ChatActivity : AppCompatActivity() {
     private var typingJob: Job? = null
     private var pendingAttachmentPath: String? = null
     private var cameraPhotoPath: String? = null
+    private var sensorManager: SensorManager? = null
+    private var parallaxListener: SensorEventListener? = null
+    private var backgroundParallax: View? = null
+    private val parallaxMaxPx = 25f
+    private val parallaxFactor = 2.5f
 
     private val replyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -115,6 +124,7 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
         storage = StorageService(this)
+        backgroundParallax = findViewById(R.id.backgroundParallax)
         recycler = findViewById(R.id.recycler)
         input = findViewById(R.id.inputMessage)
         btnSend = findViewById(R.id.btnSend)
@@ -247,6 +257,7 @@ class ChatActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         isChatOnScreen = true
+        startParallax()
         onReplyReady = {
             runOnUiThread {
                 if (isFinishing) return@runOnUiThread
@@ -292,7 +303,31 @@ class ChatActivity : AppCompatActivity() {
         super.onPause()
         isChatOnScreen = false
         onReplyReady = null
+        stopParallax()
         try { unregisterReceiver(replyReceiver) } catch (_: Exception) {}
+    }
+
+    private fun startParallax() {
+        val bg = backgroundParallax ?: return
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as? SensorManager ?: return
+        val accel = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) ?: return
+        parallaxListener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent?) {
+                if (event == null || event.values.size < 2) return
+                val dx = (-event.values[0] * parallaxFactor).coerceIn(-parallaxMaxPx, parallaxMaxPx)
+                val dy = (event.values[1] * parallaxFactor).coerceIn(-parallaxMaxPx, parallaxMaxPx)
+                bg.post { bg.translationX = dx; bg.translationY = dy }
+            }
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }
+        sensorManager?.registerListener(parallaxListener, accel, SensorManager.SENSOR_DELAY_UI)
+    }
+
+    private fun stopParallax() {
+        parallaxListener?.let { sensorManager?.unregisterListener(it) }
+        parallaxListener = null
+        sensorManager = null
+        backgroundParallax?.post { backgroundParallax?.translationX = 0f; backgroundParallax?.translationY = 0f }
     }
 
     private fun startTypingAnimation() {

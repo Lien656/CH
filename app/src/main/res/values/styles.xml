@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="TitleCH" parent="android:TextAppearance.Material.Title">
-        <item name="android:textColor">@color/name_claude</item>
+        <item name="android:textColor">@color/title_glow</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:shadowColor">@color/name_claude</item>
+        <item name="android:shadowColor">@color/title_glow</item>
         <item name="android:shadowDx">0</item>
         <item name="android:shadowDy">0</item>
-        <item name="android:shadowRadius">8</item>
+        <item name="android:shadowRadius">10</item>
     </style>
 </resources>

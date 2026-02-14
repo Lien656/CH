@@ -24,12 +24,14 @@ class AttachmentsActivity : AppCompatActivity() {
             setSupportActionBar(it)
             it.setNavigationOnClickListener { finish() }
         }
+        val storage = StorageService(this)
         val paths = mutableSetOf<String>()
-        for (m in StorageService(this).getMessages()) {
+        for (m in storage.getMessages()) {
             m.attachmentPath?.let { if (File(it).exists()) paths.add(it) }
         }
         val dir = File(filesDir, "attachments")
         if (dir.exists()) dir.listFiles()?.forEach { paths.add(it.absolutePath) }
+        storage.getClaudeFilesDir().listFiles()?.forEach { paths.add(it.absolutePath) }
         val list = paths.toList().sortedBy { it }
         val recycler = findViewById<RecyclerView>(R.id.recycler)
         recycler.layoutManager = LinearLayoutManager(this)

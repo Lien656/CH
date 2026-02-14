@@ -6,7 +6,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import ch.home.chat.service.StorageService
 
-/** Ключ Claude (Sonnet) для «глаз» — распознавание картинок. Работает всегда, даже при выбранной модели DeepSeek. */
+/** Ключ Claude (Sonnet) для «глаз» — распознавание картинок. */
 class VisionEyesActivity : AppCompatActivity() {
     private lateinit var storage: StorageService
 
@@ -21,7 +21,7 @@ class VisionEyesActivity : AppCompatActivity() {
         findViewById<EditText>(R.id.visionKeyInput).setText(storage.claudeApiKey ?: "")
         findViewById<Button>(R.id.btnSave).setOnClickListener {
             val key = findViewById<EditText>(R.id.visionKeyInput).text?.toString()?.trim()
-            storage.claudeApiKey = key
+            if (!key.isNullOrEmpty()) storage.claudeApiKey = key
             finish()
         }
     }
