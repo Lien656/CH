@@ -210,6 +210,6 @@ class StorageService(context: Context) {
         private const val DEFAULT_DEEPSEEK_BASE = "https://api.deepseek.com"
         private const val DEFAULT_DEEPSEEK_MODEL = "deepseek-chat"
         const val MAX_STORED = 4000
-        private const val MAX_CONTENT_LENGTH = 8000
+        private const val MAX_CONTENT_LENGTH = 20_000
     }
 }

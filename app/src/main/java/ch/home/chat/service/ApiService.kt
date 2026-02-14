@@ -82,7 +82,8 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
         }
     }
 
-    private val maxTextFileBytes = 8_000
+    /** Файлы без обрезки — до ~3+ страниц A4. */
+    private val maxTextFileBytes = 20_000
 
     /** Returns String or JSONArray (for multimodal user message). */
     private fun buildMessageContent(m: ChatMessage): Any {
@@ -395,8 +396,9 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
         private const val MODEL_FALLBACK = "claude-3-sonnet-20240229"
         private const val MODEL_DEEPSEEK = "deepseek-chat"
         private const val ANTHROPIC_VERSION = "2023-06-01"
-        private const val MAX_TOKENS = 600
+        /** Лимит токенов на ответ — не обрезать, писать сколько нужно. */
+        private const val MAX_TOKENS = 8192
         private const val MAX_MESSAGES_PER_REQUEST = 24
-        private const val MAX_CONTENT_CHARS_PER_MESSAGE = 4000
+        private const val MAX_CONTENT_CHARS_PER_MESSAGE = 20_000
     }
 }
