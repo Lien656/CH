@@ -38,4 +38,9 @@
     <string name="settings_more">Экспорт, восстановление, промпт</string>
     <string name="first_run_provider_title">Какую модель использовать?</string>
     <string name="first_run_provider_message">Выбери провайдера. Потом в настройках (шестерёнка) можно переключаться и ввести второй ключ.</string>
+    <string name="first_run_deepseek_label">Ключ DeepSeek</string>
+    <string name="first_run_deepseek_hint">По умолчанию для ответов. В настройках (шестерёнка) можно добавить ключ Sonnet и переключать модель.</string>
+    <string name="settings_keys">Ключи</string>
+    <string name="keys_eyes_hint">Sonnet — всегда для картинок (глаза)</string>
+    <string name="keys_voice_hint">Кто отвечает в чате — выбирается в «Модель» ниже</string>
 </resources>

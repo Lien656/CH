@@ -5,11 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ListView
 import android.widget.TextView
-import androidx.appcompat.widget.SwitchCompat
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -46,34 +48,33 @@ class SettingsActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener { finish() }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val switchUseClaude = findViewById<SwitchCompat>(R.id.switchUseClaude)
-        val claudeBlock = findViewById<View>(R.id.claudeBlock)
-        val deepseekBlock = findViewById<View>(R.id.deepseekBlock)
         val claudeKeyInput = findViewById<EditText>(R.id.claudeKeyInput)
         val deepseekKeyInput = findViewById<EditText>(R.id.deepseekKeyInput)
         val deepseekUrlInput = findViewById<EditText>(R.id.deepseekUrlInput)
         val claudeModelLabel = findViewById<TextView>(R.id.claudeModelLabel)
         val deepseekModelLabel = findViewById<TextView>(R.id.deepseekModelLabel)
+        val modelValue = findViewById<TextView>(R.id.modelValue)
 
-        fun refreshProviderUi() {
-            val useClaude = switchUseClaude.isChecked
-            storage.useClaude = useClaude
-            claudeBlock.visibility = if (useClaude) View.VISIBLE else View.GONE
-            deepseekBlock.visibility = if (useClaude) View.GONE else View.VISIBLE
-        }
-
-        switchUseClaude.isChecked = storage.useClaude
         claudeKeyInput.setText(storage.claudeApiKey ?: "")
         deepseekKeyInput.setText(storage.deepseekApiKey ?: "")
         deepseekUrlInput.setText(storage.deepseekApiBase)
         claudeModelLabel.text = claudeModelDisplayName(storage.claudeModel)
         deepseekModelLabel.text = deepseekModelDisplayName(storage.deepseekModel)
-        refreshProviderUi()
-
-        switchUseClaude.setOnCheckedChangeListener { _, _ -> refreshProviderUi() }
+        modelValue.text = if (storage.useClaude) getString(R.string.provider_claude) else getString(R.string.provider_deepseek)
 
         claudeModelLabel.setOnClickListener { showClaudeModelDialog { storage.claudeModel = it; claudeModelLabel.text = claudeModelDisplayName(it) } }
         deepseekModelLabel.setOnClickListener { showDeepseekModelDialog { storage.deepseekModel = it; deepseekModelLabel.text = deepseekModelDisplayName(it) } }
+
+        findViewById<View>(R.id.modelRow).setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.model)
+                .setItems(arrayOf(getString(R.string.provider_claude), getString(R.string.provider_deepseek))) { _, which ->
+                    storage.useClaude = (which == 0)
+                    modelValue.text = if (storage.useClaude) getString(R.string.provider_claude) else getString(R.string.provider_deepseek)
+                    Toast.makeText(this, getString(R.string.saved), Toast.LENGTH_SHORT).show()
+                }
+                .show()
+        }
 
         findViewById<View>(R.id.itemExport).setOnClickListener { exportChat() }
         findViewById<View>(R.id.itemRestore).setOnClickListener { restoreChatLauncher.launch(arrayOf("application/json", "text/plain", "*/*")) }
@@ -88,7 +89,6 @@ class SettingsActivity : AppCompatActivity() {
         storage.deepseekApiKey = findViewById<EditText>(R.id.deepseekKeyInput).text?.toString()?.trim()
         val url = findViewById<EditText>(R.id.deepseekUrlInput).text?.toString()?.trim()
         if (!url.isNullOrEmpty()) storage.deepseekApiBase = url
-        storage.useClaude = findViewById<SwitchCompat>(R.id.switchUseClaude).isChecked
     }
 
     private fun claudeModelDisplayName(id: String): String = when (id) {
@@ -130,7 +130,7 @@ class SettingsActivity : AppCompatActivity() {
         dialog.setContentView(root)
         val list = root.findViewById<ListView>(R.id.modelList)
         list.adapter = ArrayAdapter(this, R.layout.item_settings, displayNames)
-        list.setOnItemClickListener { _, _, position, _ ->
+        list.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
             onPick(models[position].second)
             dialog.dismiss()
             Toast.makeText(this, getString(R.string.saved), Toast.LENGTH_SHORT).show()

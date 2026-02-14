@@ -29,10 +29,17 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/api_key_label"
-            android:textColor="@color/text"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+        android:text="@string/first_run_deepseek_label"
+        android:textColor="@color/text"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/first_run_deepseek_hint"
+        android:textColor="@color/hint"
+        android:textSize="14sp" />
 
         <EditText
             android:id="@+id/apiKeyInput"
@@ -40,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/bg_bubble"
-            android:hint="@string/api_key_hint"
+            android:hint="sk-…"
             android:inputType="textPassword"
             android:padding="16dp"
             android:textColor="@color/text"

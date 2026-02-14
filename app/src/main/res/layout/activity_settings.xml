@@ -27,18 +27,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/provider_toggle_label"
+                android:text="@string/settings_keys"
                 android:textColor="@color/text"
-                android:textSize="14sp"
-                android:paddingBottom="8dp" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switchUseClaude"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingBottom="4dp" />
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/provider_claude"
-                android:textColor="@color/text" />
+                android:text="@string/keys_eyes_hint"
+                android:textColor="@color/hint"
+                android:textSize="12sp"
+                android:paddingBottom="12dp" />
 
             <LinearLayout
                 android:id="@+id/claudeBlock"
@@ -89,8 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:visibility="gone">
+                android:paddingTop="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -146,6 +145,47 @@
                     android:clickable="true"
                     android:focusable="true" />
             </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/model"
+                android:textColor="@color/text"
+                android:textSize="14sp"
+                android:paddingBottom="6dp" />
+            <LinearLayout
+                android:id="@+id/modelRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_bubble"
+                android:padding="14dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/modelValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/text"
+                    android:textSize="@dimen/text_size_body" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="▼"
+                    android:textColor="@color/hint"
+                    android:textSize="12sp" />
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/keys_voice_hint"
+                android:textColor="@color/hint"
+                android:textSize="11sp"
+                android:paddingBottom="8dp" />
 
             <View
                 android:layout_width="match_parent"

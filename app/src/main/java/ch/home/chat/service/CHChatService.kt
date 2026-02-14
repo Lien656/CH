@@ -50,9 +50,23 @@ class CHChatService : Service() {
         requestJob = scope.launch {
             try {
                 val storage = StorageService(this@CHChatService)
-                val key = storage.effectiveKey() ?: return@launch
-                val api = ApiService(key, storage.effectiveBase(), storage.effectiveModel())
                 val history = storage.getMessages()
+                val hasImage = history.any { m -> m.role == "user" && !m.attachmentPath.isNullOrEmpty() && isImagePath(m.attachmentPath!!) }
+                // Глаза всегда Sonnet; голос (кто отвечает) — на выбор (useClaude = Sonnet/DeepSeek).
+                val key: String?
+                val base: String
+                val model: String
+                if (hasImage) {
+                    key = storage.claudeApiKey
+                    base = CLAUDE_API_BASE
+                    model = storage.claudeModel
+                } else {
+                    key = storage.effectiveKey()
+                    base = storage.effectiveBase()
+                    model = storage.effectiveModel()
+                }
+                if (key.isNullOrEmpty()) return@launch
+                val api = ApiService(key, base, model)
                 val chMemory = storage.getChMemory().take(8000)
                 val chatLogTail = storage.getChatLogTail(4000)
                 val deviceContext = DeviceContext.get(this@CHChatService)
@@ -162,6 +176,12 @@ class CHChatService : Service() {
         return START_NOT_STICKY
     }
 
+    private fun isImagePath(path: String): Boolean {
+        val lower = path.lowercase()
+        return lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".png") ||
+            lower.endsWith(".gif") || lower.endsWith(".webp")
+    }
+
     private fun createChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val ch = NotificationChannel(CHANNEL_ID, getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW).apply {
@@ -174,6 +194,7 @@ class CHChatService : Service() {
     }
 
     companion object {
+        private const val CLAUDE_API_BASE = "https://api.anthropic.com"
         const val ACTION_REPLY_READY = "ch.home.chat.REPLY_READY"
         private const val CHANNEL_ID = "ch_chat"
         private const val CHANNEL_ID_DONE = "ch_chat_done"
