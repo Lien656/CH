@@ -288,7 +288,15 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
 
         var (code, respBodyStr) = executeOnce(modelToUse)
         if (code == 404 && (respBodyStr.contains("model") || respBodyStr.contains("not_found"))) {
-            // Сначала пробуем известные алиасы, потом список из GET /v1/models
+            // При сбоях у Anthropic повтор через пару секунд иногда помогает
+            Thread.sleep(3000)
+            val retry = executeOnce(modelToUse)
+            if (retry.first == 200) {
+                code = 200
+                respBodyStr = retry.second
+            }
+        }
+        if (code == 404 && (respBodyStr.contains("model") || respBodyStr.contains("not_found"))) {
             val toTry = listOf("claude-3-5-sonnet-latest", "claude-3-7-sonnet-latest") + getAvailableModels()
             for (modelId in toTry) {
                 if (modelId == modelToUse) continue
@@ -324,7 +332,7 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
         if (code != 200) {
             val friendlyMessage = when {
                 code == 401 -> "Неверный API ключ"
-                code == 404 -> "Модель не найдена. Проверь ключ и доступ в console.anthropic.com — там список доступных моделей."
+                code == 404 -> "Модель не найдена или сбой у Anthropic. Настройки → Модель: введи ID из console.anthropic.com. Статус: status.anthropic.com"
                 isOverloaded || code == 529 -> "Anthropic перегружен. Подожди минуту и попробуй снова."
                 else -> "Ошибка $code. Попробуй позже."
             }
