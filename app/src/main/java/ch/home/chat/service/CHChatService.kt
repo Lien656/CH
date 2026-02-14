@@ -51,8 +51,8 @@ class CHChatService : Service() {
             startForeground(NOTIF_ID, notif)
         }
         requestJob = scope.launch {
-            try {
                 val storage = StorageService(this@CHChatService)
+            try {
                 val history = storage.getMessages()
                 val key = storage.effectiveKey()
                 if (key.isNullOrEmpty()) return@launch

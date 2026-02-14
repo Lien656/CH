@@ -26,6 +26,11 @@ class StorageService(context: Context) {
         get() = claudeApiKey
         set(value) { claudeApiKey = value }
 
+    /** Только для совместимости с ApiUrlActivity; всегда Anthropic. */
+    var apiBase: String
+        get() = DEFAULT_API_BASE
+        set(_) { /* фиксированный URL для Claude */ }
+
     var vibrationOnReply: Boolean
         get() = prefs.getBoolean(KEY_VIBRATION_ON_REPLY, true)
         set(value) { prefs.edit().putBoolean(KEY_VIBRATION_ON_REPLY, value).apply() }
