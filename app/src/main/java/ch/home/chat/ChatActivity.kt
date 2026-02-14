@@ -132,12 +132,13 @@ class ChatActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { } // no back from chat to api key
-        supportActionBar?.setDisplayShowTitleEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         toolbar.menu.clear()
         toolbar.inflateMenu(R.menu.chat_menu)
-        // Тап по названию открывает меню (overflow)
-        toolbar.setOnClickListener { toolbar.showOverflowMenu() }
+        val titleView = layoutInflater.inflate(R.layout.toolbar_title_clickable, toolbar, false)
+        titleView.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
+        toolbar.addView(titleView)
 
         adapter = ChatAdapter(
             messages = messages,

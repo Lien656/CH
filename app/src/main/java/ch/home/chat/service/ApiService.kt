@@ -35,8 +35,8 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
     private fun isDeepSeek(): Boolean = modelName.startsWith("deepseek", ignoreCase = true) ||
         apiBase.lowercase().contains("deepseek")
 
-    /** Получить первую доступную модель по ключу (из GET /v1/models). */
-    private fun getAvailableModel(): String? {
+    /** Список моделей по ключу (GET /v1/models): сначала sonnet, потом остальные. */
+    private fun getAvailableModels(): List<String> {
         return try {
             val req = Request.Builder()
                 .url(modelsUrl())
@@ -45,20 +45,22 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
                 .get()
                 .build()
             val resp = client.newCall(req).execute()
-            if (resp.code != 200) return null
+            if (resp.code != 200) return emptyList()
             val json = JSONObject(resp.body?.string() ?: "{}")
-            val data = json.optJSONArray("data") ?: return null
-            if (data.length() == 0) return null
-            // Предпочитаем sonnet, иначе первую модель
+            val data = json.optJSONArray("data") ?: return emptyList()
+            val sonnets = mutableListOf<String>()
+            val others = mutableListOf<String>()
             for (i in 0 until data.length()) {
                 val id = data.optJSONObject(i)?.optString("id") ?: continue
-                if (id.contains("sonnet", ignoreCase = true)) return id
+                if (id.contains("sonnet", ignoreCase = true)) sonnets.add(id) else others.add(id)
             }
-            data.optJSONObject(0)?.optString("id")
+            sonnets + others
         } catch (_: Exception) {
-            null
+            emptyList()
         }
     }
+
+    private fun getAvailableModel(): String? = getAvailableModels().firstOrNull()
 
     private fun isLocalhost(base: String): Boolean {
         val b = base.lowercase()
@@ -282,12 +284,15 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
 
         var (code, respBodyStr) = executeOnce(modelToUse)
         if (code == 404 && (respBodyStr.contains("model") || respBodyStr.contains("not_found"))) {
-            // Запрашиваем список моделей по API и пробуем первую доступную (sonnet)
-            val fromApi = getAvailableModel()
-            if (!fromApi.isNullOrBlank() && fromApi != modelToUse) {
-                val fallbackResult = executeOnce(fromApi)
-                code = fallbackResult.first
-                respBodyStr = fallbackResult.second
+            // Перебираем все модели из API, пока одна не сработает
+            for (modelId in getAvailableModels()) {
+                if (modelId == modelToUse) continue
+                val result = executeOnce(modelId)
+                if (result.first == 200) {
+                    code = 200
+                    respBodyStr = result.second
+                    break
+                }
             }
         }
         // 529 / overloaded_error — повтор с задержкой, потом понятное сообщение
