@@ -67,8 +67,8 @@ class ChatActivity : AppCompatActivity() {
     private var sensorManager: SensorManager? = null
     private var parallaxListener: SensorEventListener? = null
     private var backgroundParallax: View? = null
-    private val parallaxMaxPx = 25f
-    private val parallaxFactor = 2.5f
+    private val parallaxMaxPx = 40f
+    private val parallaxFactor = 4f
 
     private val replyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -136,8 +136,8 @@ class ChatActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         toolbar.menu.clear()
         toolbar.inflateMenu(R.menu.chat_menu)
-        // Тап по заголовку открывает настройки (как у Kael)
-        toolbar.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
+        // Тап по названию открывает меню (overflow)
+        toolbar.setOnClickListener { toolbar.showOverflowMenu() }
 
         adapter = ChatAdapter(
             messages = messages,

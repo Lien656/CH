@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/background"
+        android:background="@drawable/bg_toolbar_glass"
         android:title="@string/settings"
         android:titleTextColor="@color/text" />
 

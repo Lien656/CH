@@ -19,7 +19,11 @@
             android:layout_height="wrap_content"
             android:textColor="@color/name_claude"
             android:textSize="@dimen/text_size_sender"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:shadowColor="@color/name_claude"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="3" />
 
         <TextView
             android:id="@+id/messageTime"
@@ -56,7 +60,8 @@
                 android:alpha="1"
                 android:padding="12dp"
                 android:textColor="@color/text"
-                android:textSize="@dimen/text_size_body" />
+                android:textSize="@dimen/text_size_body"
+                android:textIsSelectable="true" />
 
             <LinearLayout
                 android:id="@+id/messageFileContainer"
