@@ -21,9 +21,13 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
         .writeTimeout(60, TimeUnit.SECONDS)
         .build()
 
-    /** База без завершающего слэша и без /v1 (путь /v1/... добавим отдельно). */
-    private fun baseUrl(): String = apiBase.trim().removeSuffix("/").let { u ->
-        if (u.endsWith("/v1")) u.removeSuffix("/v1") else u
+    /** База для Anthropic всегда https://api.anthropic.com без слэша; без /v1 в конце. */
+    private fun baseUrl(): String {
+        val raw = apiBase.trim().removeSuffix("/").let { u ->
+            if (u.endsWith("/v1")) u.removeSuffix("/v1") else u
+        }
+        if (raw.lowercase().contains("anthropic")) return "https://api.anthropic.com"
+        return raw
     }
 
     private fun messagesUrl(): String = "${baseUrl()}/v1/messages"
