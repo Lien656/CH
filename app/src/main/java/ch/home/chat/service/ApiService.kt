@@ -417,7 +417,7 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
         // PRIMARY: актуальная модель
         private const val MODEL_PRIMARY = "claude-3-5-sonnet-latest"
         // FALLBACK: если primary вернёт 404 (октябрьская версия может быть недоступна в части регионов)
-        private const val MODEL_FALLBACK = "claude-3-5-sonnet-20240620"
+        private const val MODEL_FALLBACK = "claude-3-5-sonnet-20241022"
         private const val MODEL_DEEPSEEK = "deepseek-chat"
         private const val ANTHROPIC_VERSION = "2023-06-01"
         /** Лимит токенов на ответ — не обрезать, писать сколько нужно. */

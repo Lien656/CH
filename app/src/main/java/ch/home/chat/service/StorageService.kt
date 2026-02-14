@@ -14,9 +14,21 @@ class StorageService(context: Context) {
         get() = prefs.getString(KEY_CLAUDE_API_KEY, prefs.getString(KEY_API_KEY, null))
         set(value) { prefs.edit().putString(KEY_CLAUDE_API_KEY, value?.trim().takeIf { !it.isNullOrEmpty() }).apply() }
 
+    /** Устаревший ID — при чтении подменяем на актуальный и сохраняем. */
+    private fun normalizeModel(saved: String): String {
+        if (saved.isBlank()) return DEFAULT_API_MODEL
+        if (saved == DEPRECATED_MODEL_20240620) return DEFAULT_API_MODEL
+        return saved
+    }
+
     var claudeModel: String
-        get() = prefs.getString(KEY_CLAUDE_MODEL, DEFAULT_API_MODEL) ?: DEFAULT_API_MODEL
-        set(value) { prefs.edit().putString(KEY_CLAUDE_MODEL, value?.trim() ?: DEFAULT_API_MODEL).apply() }
+        get() {
+            val saved = prefs.getString(KEY_CLAUDE_MODEL, DEFAULT_API_MODEL) ?: DEFAULT_API_MODEL
+            val model = normalizeModel(saved)
+            if (model != saved) prefs.edit().putString(KEY_CLAUDE_MODEL, model).apply()
+            return model
+        }
+        set(value) { prefs.edit().putString(KEY_CLAUDE_MODEL, value?.trim()?.let { normalizeModel(it) } ?: DEFAULT_API_MODEL).apply() }
 
     fun effectiveKey(): String? = claudeApiKey
     fun effectiveBase(): String = DEFAULT_API_BASE
@@ -179,6 +191,7 @@ class StorageService(context: Context) {
         private const val KEY_MESSAGES = "messages"
         private const val DEFAULT_API_BASE = "https://api.anthropic.com"
         private const val DEFAULT_API_MODEL = "claude-3-5-sonnet-latest"
+        private const val DEPRECATED_MODEL_20240620 = "claude-3-5-sonnet-20240620"
         const val MAX_STORED = 4000
         private const val MAX_CONTENT_LENGTH = 20_000
     }
