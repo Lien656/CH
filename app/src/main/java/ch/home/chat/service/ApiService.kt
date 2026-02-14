@@ -21,7 +21,7 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
         .writeTimeout(60, TimeUnit.SECONDS)
         .build()
 
-    /** База для Anthropic всегда https://api.anthropic.com без слэша; без /v1 в конце. */
+    /** Base URL для Anthropic — строго https://api.anthropic.com (без слэша и без /v1). */
     private fun baseUrl(): String {
         val raw = apiBase.trim().removeSuffix("/").let { u ->
             if (u.endsWith("/v1")) u.removeSuffix("/v1") else u
@@ -30,6 +30,7 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
         return raw
     }
 
+    /** Endpoint для чата — обязательно /v1/messages (не просто /v1). */
     private fun messagesUrl(): String = "${baseUrl()}/v1/messages"
 
     private fun chatCompletionsUrl(): String = "${baseUrl()}/v1/chat/completions"
@@ -414,11 +415,11 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
     }
 
     companion object {
-        // PRIMARY: актуальная модель
+        // Только алиасы — без дат в ID (Anthropic сам обновляет)
         private const val MODEL_PRIMARY = "claude-3-5-sonnet-latest"
-        // FALLBACK: если primary вернёт 404 (октябрьская версия может быть недоступна в части регионов)
-        private const val MODEL_FALLBACK = "claude-3-5-sonnet-20241022"
+        private const val MODEL_FALLBACK = "claude-3-5-sonnet-latest"
         private const val MODEL_DEEPSEEK = "deepseek-chat"
+        /** Обязательный заголовок для Anthropic API */
         private const val ANTHROPIC_VERSION = "2023-06-01"
         /** Лимит токенов на ответ — не обрезать, писать сколько нужно. */
         private const val MAX_TOKENS = 800
