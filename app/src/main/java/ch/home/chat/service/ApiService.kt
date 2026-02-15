@@ -298,7 +298,7 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
             }
         }
         if (code == 404 && (respBodyStr.contains("model") || respBodyStr.contains("not_found"))) {
-            val toTry = listOf("claude-3-5-sonnet-latest", "claude-3-7-sonnet-latest") + getAvailableModels()
+            val toTry = listOf("claude-3-5-sonnet-20241022", "claude-3-5-sonnet-latest", "claude-3-7-sonnet-latest") + getAvailableModels()
             for (modelId in toTry) {
                 if (modelId == modelToUse) continue
                 val result = executeOnce(modelId)
@@ -415,9 +415,9 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
     }
 
     companion object {
-        // Только алиасы — без дат в ID (Anthropic сам обновляет)
-        private const val MODEL_PRIMARY = "claude-3-5-sonnet-latest"
-        private const val MODEL_FALLBACK = "claude-3-5-sonnet-latest"
+        /** Датированный ID — стабильнее алиаса, у части ключей -latest даёт 404. */
+        private const val MODEL_PRIMARY = "claude-3-5-sonnet-20241022"
+        private const val MODEL_FALLBACK = "claude-3-5-sonnet-20241022"
         private const val MODEL_DEEPSEEK = "deepseek-chat"
         /** Обязательный заголовок для Anthropic API */
         private const val ANTHROPIC_VERSION = "2023-06-01"
