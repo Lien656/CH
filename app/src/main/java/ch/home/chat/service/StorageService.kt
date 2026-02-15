@@ -14,11 +14,11 @@ class StorageService(context: Context) {
         get() = prefs.getString(KEY_CLAUDE_API_KEY, prefs.getString(KEY_API_KEY, null))
         set(value) { prefs.edit().putString(KEY_CLAUDE_API_KEY, value?.trim().takeIf { !it.isNullOrEmpty() }).apply() }
 
-    /** Устаревшие/проблемные ID — при чтении подменяем на стабильный и сохраняем. */
+    /** Устаревшие ID (404) — при чтении подменяем на алиас и сохраняем. */
     private fun normalizeModel(saved: String): String {
         if (saved.isBlank()) return DEFAULT_API_MODEL
         if (saved == DEPRECATED_MODEL_20240620) return DEFAULT_API_MODEL
-        if (saved == "claude-3-5-sonnet-latest") return DEFAULT_API_MODEL
+        if (saved == "claude-3-5-sonnet-20241022") return DEFAULT_API_MODEL
         return saved
     }
 
@@ -191,8 +191,8 @@ class StorageService(context: Context) {
         private const val KEY_FIRST_RUN = "first_run"
         private const val KEY_MESSAGES = "messages"
         private const val DEFAULT_API_BASE = "https://api.anthropic.com"
-        /** Датированный ID стабильнее алиаса -latest у части ключей/регионов. */
-        private const val DEFAULT_API_MODEL = "claude-3-5-sonnet-20241022"
+        /** Алиас — Anthropic подставляет актуальную модель. Устаревшие даты (20241022 и др.) нормализуем сюда. */
+        private const val DEFAULT_API_MODEL = "claude-3-5-sonnet-latest"
         private const val DEPRECATED_MODEL_20240620 = "claude-3-5-sonnet-20240620"
         const val MAX_STORED = 4000
         private const val MAX_CONTENT_LENGTH = 20_000

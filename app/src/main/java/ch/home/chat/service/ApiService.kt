@@ -203,9 +203,18 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
         return try {
             var (code, respBodyStr) = execOnce(modelToUse)
             if (code == 404 && (respBodyStr.contains("model") || respBodyStr.contains("not_found"))) {
-                val (c2, b2) = execOnce(MODEL_FALLBACK)
-                code = c2
-                respBodyStr = b2
+                val fallbacks = getAvailableModels() + MODEL_FALLBACK_IDS
+                for (mid in fallbacks) {
+                    if (mid == modelToUse) continue
+                    val (c2, b2) = execOnce(mid)
+                    if (c2 == 200) {
+                        code = 200
+                        respBodyStr = b2
+                        break
+                    }
+                    code = c2
+                    respBodyStr = b2
+                }
             }
             when (code) {
                 200 -> null
@@ -298,7 +307,7 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
             }
         }
         if (code == 404 && (respBodyStr.contains("model") || respBodyStr.contains("not_found"))) {
-            val toTry = listOf("claude-3-5-sonnet-20241022", "claude-3-5-sonnet-latest", "claude-3-7-sonnet-latest") + getAvailableModels()
+            val toTry = getAvailableModels() + MODEL_FALLBACK_IDS
             for (modelId in toTry) {
                 if (modelId == modelToUse) continue
                 val result = executeOnce(modelId)
@@ -415,9 +424,14 @@ class ApiService(private val apiKey: String, private val apiBase: String, privat
     }
 
     companion object {
-        /** Датированный ID — стабильнее алиаса, у части ключей -latest даёт 404. */
-        private const val MODEL_PRIMARY = "claude-3-5-sonnet-20241022"
-        private const val MODEL_FALLBACK = "claude-3-5-sonnet-20241022"
+        /** Алиасы и актуальные ID. Сначала используем список из GET /v1/models (автообновление). */
+        private const val MODEL_PRIMARY = "claude-3-5-sonnet-latest"
+        private const val MODEL_FALLBACK = "claude-3-7-sonnet-latest"
+        private val MODEL_FALLBACK_IDS = listOf(
+            "claude-sonnet-4-5-20250929",
+            "claude-3-7-sonnet-latest",
+            "claude-3-5-sonnet-latest"
+        )
         private const val MODEL_DEEPSEEK = "deepseek-chat"
         /** Обязательный заголовок для Anthropic API */
         private const val ANTHROPIC_VERSION = "2023-06-01"
